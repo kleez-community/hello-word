@@ -1,0 +1,7 @@
+# VS Code Files
+.vscode/*
+
+# Project Files
+logs/*
+node_modules/*
+package-lock.json
