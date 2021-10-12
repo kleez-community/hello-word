@@ -6,8 +6,7 @@ const app = nanoexpress();
 
 app
     .get('/', (req, res) => {
-        console.log('Listening on ${ PORT }');
-        return res.send({ status: 'ok2' });
+        return res.send({ status: 'ok' });
     })
     .get('/hello', (req, res) => {
         return res.send('word');
