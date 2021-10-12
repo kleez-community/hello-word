@@ -4,7 +4,10 @@ services:
   app:
     image: kleez/hello-world:node
     build:
-      context: .
+      context: ./src
+      args:
+        PORT: ${PORT:-3000}
     ports:
-      - 3000:3000
-    
+      - ${PORT:-3000}:${PORT:-3000}
+    environment:
+      PORT: ${PORT:-3000}
