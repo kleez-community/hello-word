@@ -1,0 +1,42 @@
+name: heroku-deploy
+on:
+  pull_request:
+    branches:
+      - feature/*
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: wget -O terraform.zip https://releases.hashicorp.com/terraform/1.0.8/terraform_1.0.8_linux_amd64.zip
+      - run: unzip terraform.zip && sudo mv terraform /usr/bin
+      - run: terraform -version
+      - name: autenticando terraform
+        env:
+          TERRAFORM_TOKEN: ${{ secrets.TERRAFORM_TOKEN }}
+          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+        run:  |
+          echo -e 'credentials "app.terraform.io" {\ntoken = "'"$TERRAFORM_TOKEN"'"\n}' > ~/.terraformrc
+          echo -e 'heroku_email="'"$HEROKU_EMAIL"'"\nheroku_api_key="'"$HEROKU_API_KEY"'"\nheroku_app_name="'"$HEROKU_APP_NAME"'"' > variables.auto.tfvars
+      - name: terraform plan
+        run: terraform init && terraform plan
+
+  deploy:
+    needs: plan
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - uses: actions/checkout@v2
+      - name: autenticando terraform
+        env:
+          TERRAFORM_TOKEN: ${{ secrets.TERRAFORM_TOKEN }}
+          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+        run:  |
+          echo -e 'credentials "app.terraform.io" {\ntoken = "'"$TERRAFORM_TOKEN"'"\n}' > ~/.terraformrc
+          echo -e 'heroku_email="'"$HEROKU_EMAIL"'"\nheroku_api_key="'"$HEROKU_API_KEY"'"\nheroku_app_name="'"$HEROKU_APP_NAME"'"' > variables.auto.tfvars
+      - run: terraform init && terraform apply -auto-approve
