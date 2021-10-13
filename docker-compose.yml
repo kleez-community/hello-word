@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  app:
+    image: kleez/hello-world:node
+    build:
+      context: ./src
+      args:
+        PORT: ${PORT:-3000}
+    ports:
+      - ${PORT:-3000}:${PORT:-3000}
+    environment:
+      PORT: ${PORT:-3000}

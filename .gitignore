@@ -5,3 +5,10 @@
 logs/*
 node_modules/*
 package-lock.json
+
+# Terraform files
+*.tfstate.backup
+*.tfstate
+*.lock.hcl
+.terraform/*
+*.tfvars
